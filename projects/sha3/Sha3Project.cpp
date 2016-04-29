@@ -255,9 +255,9 @@ int Sha3Project::generateHashDataStream() {
             return STAT_PROJECT_ERROR;
         }
         if (algorithm == SHA3_RANDOM) {
-            mainLogger.out(LOGGER_INFO) << "Algorithm " << (algorithmNumber+1);
-            mainLogger.out() << " is set to random, stream data generation skipped." << endl;
-            continue;
+            //mainLogger.out(LOGGER_INFO) << "Algorithm " << (algorithmNumber+1);
+            //mainLogger.out() << " is set to random, stream data generation skipped." << endl;
+            //continue;
         } else {
             mainLogger.out(LOGGER_INFO) << "Generating stream for " << Sha3Functions::sha3ToString(algorithm);
             if (numRounds == -1) {
