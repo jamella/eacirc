@@ -8,7 +8,7 @@ set(SOURCES
     backend
     eacirc
     finisher
-    settings
+#    settings
 # === legacy ===
     CommonFnc
     EACconstants.h
@@ -57,7 +57,7 @@ else()
     add_executable(eacirc ${SOURCES})
 endif()
 
-find_package(yaml-cpp)
-target_link_libraries(eacirc catch core yaml-cpp)
+#find_package(yaml-cpp)
+target_link_libraries(eacirc catch core)
 target_include_directories(eacirc PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECTS_DIR})
 set_target_properties(eacirc PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${RUN_DIR})
