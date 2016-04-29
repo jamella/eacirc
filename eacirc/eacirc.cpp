@@ -5,8 +5,8 @@
 
 Eacirc::Eacirc(const std::string)
     : _main_generator(std::random_device()())
-    , _stream_A(std::make_unique<FileStream>("sha3_stream1.bin"))
-    , _stream_B(std::make_unique<FileStream>("sha3_stream2.bin"))
+    , _stream_A(std::make_unique<FileStream>("stream1.bin"))
+    , _stream_B(std::make_unique<FileStream>("stream2.bin"))
     , _backend(circuit::Module::get_backend())
     , _tv_size(16)
     , _num_of_tvs(500)
