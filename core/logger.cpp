@@ -18,5 +18,5 @@ std::ostream& operator<<(std::ostream& os, Logger::Datestamp) {
 std::ostream& operator<<(std::ostream& os, Logger::Timestamp) {
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
-    return os << std::put_time(&tm, "%T");
+    return os << std::put_time(&tm, "[%T]");
 }

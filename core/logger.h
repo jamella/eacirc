@@ -20,9 +20,9 @@ public:
     }
     ~Logger() { Logger::instance = nullptr; }
 
-    static std::ostream& warning() { return out() << " [warning] "; }
-    static std::ostream& error() { return out() << " [error] "; }
-    static std::ostream& info() { return out() << " [info] "; }
+    static std::ostream& warning() { return out() << " warning: "; }
+    static std::ostream& error() { return out() << " error: "; }
+    static std::ostream& info() { return out() << " info: "; }
 
 protected:
     static std::ostream& out();
