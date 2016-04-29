@@ -35,15 +35,21 @@ public:
         ////////////////// statistics START
         std::ofstream best_scores_file("best_scores.csv");
         for (double score : _best_scores)
-            best_scores_file << score << ",";
-        best_scores_file << std::endl;
+            best_scores_file << score << std::endl;
         ////////////////// statistics END
 
         ////////////////// statistics START
-        std::ofstream histogram_epoch_file("histogram_per_epoch.csv");
+        std::ofstream histogram_epoch_file("histogram_epoch.csv");
         for (auto function_count : _histogram_epoch)
-            histogram_epoch_file << function_count << ",";
-        histogram_epoch_file << std::endl;
+            histogram_epoch_file << function_count << std::endl;
+        ////////////////// statistics END
+
+
+        ////////////////// statistics START
+        std::ofstream histogram_last_file("histogram_last.csv");
+        auto counts_last = _solution.genotype.get_function_count();
+        for (auto function_count : counts_last)
+            histogram_last_file << function_count << std::endl;
         ////////////////// statistics END
     }
 
