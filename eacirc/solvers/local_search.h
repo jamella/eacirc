@@ -1,7 +1,10 @@
 #pragma once
 
 #include "solver.h"
+#include <algorithm>
 #include <core/base.h>
+#include <fstream>
+#include <functional>
 #include <random>
 
 template <
@@ -16,12 +19,33 @@ private:
     Generator _generator;
     Solution<Genotype, double> _solution;
 
+    ////////////////// statistics START
+    std::vector<double> _best_scores;
+    std::array<u64, 13> _histogram_epoch; // we have 13 functions
+    ////////////////// statistics END
+
 public:
     LocalSearch(Initializer&& inititalizer, Mutator&& mutator, Evaluator&& evaluator, u64 seed)
         : _mutator(std::move(mutator))
         , _evaluator(std::move(evaluator))
         , _initializer(std::move(inititalizer))
         , _generator(seed) {}
+
+    ~LocalSearch() {
+        ////////////////// statistics START
+        std::ofstream best_scores_file("best_scores.csv");
+        for (double score : _best_scores)
+            best_scores_file << score << ",";
+        best_scores_file << std::endl;
+        ////////////////// statistics END
+
+        ////////////////// statistics START
+        std::ofstream histogram_epoch_file("histogram_per_epoch.csv");
+        for (auto function_count : _histogram_epoch)
+            histogram_epoch_file << function_count;
+        histogram_epoch_file << std::endl;
+        ////////////////// statistics END
+    }
 
     void init() override { _initializer(_solution.genotype, _generator); }
 
@@ -34,10 +58,27 @@ public:
 
             if (_solution.score <= neighbour.score)
                 _solution = std::move(neighbour);
+
+            ////////////////// statistics START
+            _best_scores.emplace_back(_solution.score);
+            ////////////////// statistics END
         }
     }
 
-    double reevaluate() override { return _solution.score = _evaluator(_solution.genotype); }
+    double reevaluate() override {
+        _solution.score = _evaluator(_solution.genotype);
+
+        ////////////////// statistics START
+        _best_scores.emplace_back(_solution.score);
+
+        auto epoch = _solution.genotype.get_function_count();
+        std::transform(
+                epoch.begin(), epoch.end(), _histogram_epoch.begin(), _histogram_epoch.begin(),
+                std::plus<u64>{});
+        ////////////////// statistics END
+
+        return _solution.score;
+    }
 
     void replace_datasets(Dataset const& a, Dataset const& b) override {
         _evaluator.replace_datasets(a, b);

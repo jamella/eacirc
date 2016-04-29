@@ -52,5 +52,14 @@ public:
 
     auto node(size_t i) -> Node<IO, Shape>& { return _layers.front()[i]; }
     auto node(size_t i) const -> Node<IO, Shape> const& { return _layers.front()[i]; }
+
+    ////////////////// statistics START
+    std::array<u64, 13> get_function_count() const {
+        std::array<u64, 13> counts = {};
+        for (unsigned i = 0; i != num_of_nodes; ++i)
+            counts[static_cast<size_t>(node(i).function)]++;
+        return counts;
+    }
+    ////////////////// statistics END
 };
 } // namespace circuit
