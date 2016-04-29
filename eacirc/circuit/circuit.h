@@ -1,10 +1,10 @@
 #pragma once
 
-#include "backend.h"
+#include "../backend.h"
 #include "evaluators.h"
 #include "genotype.h"
 #include "operators.h"
-#include <solvers/local_search.h>
+#include "../solvers/local_search.h"
 
 namespace circuit {
 template <unsigned I, unsigned O> struct IO {

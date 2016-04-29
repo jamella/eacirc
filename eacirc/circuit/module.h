@@ -1,6 +1,6 @@
 #pragma once
 
-#include "backend.h"
+#include "../backend.h"
 
 namespace circuit {
 struct Module {

@@ -5,16 +5,14 @@
 
 Eacirc::Eacirc(const std::string)
     : _main_generator(std::random_device()())
+    , _stream_A(std::make_unique<FileStream>("sha3_stream1.bin"))
+    , _stream_B(std::make_unique<FileStream>("sha3_stream2.bin"))
+    , _backend(circuit::Module::get_backend())
     , _tv_size(16)
     , _num_of_tvs(500)
     , _num_of_epochs(300)
     , _change_frequency(100)
-    , _significance_level(5) {
-    _stream_A = std::make_unique<FileStream>("sha3_stream1.bin");
-    _stream_B = std::make_unique<FileStream>("sha3_stream2.bin");
-
-    _backend = circuit::Module::get_backend();
-}
+    , _significance_level(5) {}
 
 void Eacirc::run() {
     std::vector<double> pvalues;
@@ -36,6 +34,13 @@ void Eacirc::run() {
 
         std::cout << "epoch " << i << " finished" << std::endl;
     }
+
+    _stream_A->read(ins_A);
+    _stream_B->read(ins_B);
+
+    solver->replace_datasets(ins_A, ins_B);
+
+    pvalues.emplace_back(solver->reevaluate());
 
     Finisher::ks_test_finish(pvalues, _significance_level);
 }

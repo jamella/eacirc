@@ -1,5 +1,5 @@
 #include "categories.h"
-#include <CommonFnc.h>
+#include "../CommonFnc.h"
 
 double Categories::compute_result() const {
     // using two-smaple Chi^2 test
