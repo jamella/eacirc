@@ -42,7 +42,7 @@ public:
         ////////////////// statistics START
         std::ofstream histogram_epoch_file("histogram_per_epoch.csv");
         for (auto function_count : _histogram_epoch)
-            histogram_epoch_file << function_count;
+            histogram_epoch_file << function_count << ",";
         histogram_epoch_file << std::endl;
         ////////////////// statistics END
     }
