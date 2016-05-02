@@ -47,24 +47,39 @@ private:
     FnPool const _fn_pool;
     unsigned _tv_size;
 
+    unsigned _function_distance;
+    unsigned _argument_distance;
+    unsigned _connector_distance;
+
 public:
-    Basic_Mutator(unsigned tv_size) : _tv_size(tv_size) {}
+    Basic_Mutator(
+            unsigned tv_size, unsigned function_distance, unsigned argument_distance,
+            unsigned connector_distance)
+        : _tv_size(tv_size)
+        , _function_distance(function_distance)
+        , _argument_distance(argument_distance)
+        , _connector_distance(connector_distance) {}
 
     template <class Generator> void operator()(Genotype<IO, Shape>& circuit, Generator& g) {
-        std::uniform_int_distribution<unsigned> node_dst{0, Genotype<IO, Shape>::num_of_nodes};
+        std::uniform_int_distribution<size_t> node_dst{0, Genotype<IO, Shape>::num_of_nodes};
 
-        circuit.node(node_dst(g)).function = Helper<IO, Shape>::generate_function(_fn_pool, g);
-        circuit.node(node_dst(g)).argument = Helper<IO, Shape>::generate_argument(g);
+        for (unsigned i = 0; i != _function_distance; ++i)
+            circuit.node(node_dst(g)).function = Helper<IO, Shape>::generate_function(_fn_pool, g);
+        for (unsigned i = 0; i != _argument_distance; ++i)
+            circuit.node(node_dst(g)).argument = Helper<IO, Shape>::generate_argument(g);
+        for (unsigned i = 0; i != _connector_distance; ++i)
+            mutate_connectors(circuit, node_dst(g), g);
+    }
 
-        auto i = node_dst(g);
-        if (i < Shape::x) {
-            // mutate connectors in first layer
+    template <class G> void mutate_connectors(Genotype<IO, Shape>& circuit, size_t node, G& g) {
+        if (node < Shape::x) {
+            // mutate connector in first layer
             std::uniform_int_distribution<unsigned> dst{0, _tv_size - 1};
-            circuit.node(i).connectors.flip(dst(g));
+            circuit.node(node).connectors.flip(dst(g));
         } else {
-            // mutate connectors in other layers
+            // mutate connector in other layers
             std::uniform_int_distribution<unsigned> dst{0, Shape::x - 1};
-            circuit.node(i).connectors.flip(dst(g));
+            circuit.node(node).connectors.flip(dst(g));
         }
     }
 };

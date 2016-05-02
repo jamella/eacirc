@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../backend.h"
+#include "../solvers/local_search.h"
 #include "evaluators.h"
 #include "genotype.h"
 #include "operators.h"
-#include "../solvers/local_search.h"
 
 namespace circuit {
 template <unsigned I, unsigned O> struct IO {
@@ -33,7 +33,7 @@ public:
 
     std::unique_ptr<Solver> solver(u64 seed) final {
         return std::make_unique<CircuitSolver>(
-                Initializer{_tv_size}, Mutator{_tv_size}, Evaluator{_precison}, seed);
+                Initializer{_tv_size}, Mutator{_tv_size, 2, 2, 3}, Evaluator{_precison}, seed);
     }
 };
 } // namespace circuit
