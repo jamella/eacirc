@@ -17,5 +17,32 @@ double Categories::compute_result() const {
         }
     }
     dof--; // last category is fully determined by others
+
+    ///////////// STATISTICS START
+    _histogram_history_a.emplace_back(_histogram_A);
+    _histogram_history_b.emplace_back(_histogram_B);
+    ///////////// STATISTICS END
+
     return (1.0 - CommonFnc::chisqr(dof, chi_square_value));
+}
+
+#include <fstream>
+
+Categories::~Categories() {
+    {
+        std::ofstream histogram_history_file_a("histograms_a.csv");
+        for (const auto& histogram : _histogram_history_a) {
+            for (const auto& value : histogram)
+                histogram_history_file_a << value << ",";
+            histogram_history_file_a << std::endl;
+        }
+    }
+    {
+        std::ofstream histogram_history_file_b("histograms_b.csv");
+        for (const auto& histogram : _histogram_history_b) {
+            for (const auto& value : histogram)
+                histogram_history_file_b << value << ",";
+            histogram_history_file_b << std::endl;
+        }
+    }
 }

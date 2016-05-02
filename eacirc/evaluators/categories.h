@@ -9,9 +9,14 @@ class Categories {
     std::vector<u64> _histogram_A;
     std::vector<u64> _histogram_B;
 
+    mutable std::vector<std::vector<u64>> _histogram_history_a;
+    mutable std::vector<std::vector<u64>> _histogram_history_b;
+
 public:
     Categories(unsigned precision)
         : _precision(precision), _histogram_A(_precision), _histogram_B(_precision) {}
+
+    ~Categories();
 
     void reset() {
         std::fill(_histogram_A.begin(), _histogram_A.end(), 0u);
