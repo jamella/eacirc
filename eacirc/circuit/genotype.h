@@ -54,12 +54,71 @@ public:
     auto node(size_t i) const -> Node<IO, Shape> const& { return _layers.front()[i]; }
 
     ////////////////// statistics START
-    std::array<u64, 13> get_function_count() const {
-        std::array<u64, 13> counts = {};
-        for (unsigned i = 0; i != num_of_nodes; ++i)
-            counts[static_cast<size_t>(node(i).function)]++;
-        return counts;
-    }
+    std::array<u64, 13> get_function_count() const;
     ////////////////// statistics END
 };
+} // namespace circuit
+
+#include <cassert>
+
+namespace circuit {
+template <class IO, class Shape> struct Prunner {
+    std::array<u64, 13> _counts = {};
+    std::array<std::array<bool, Shape::x>, Shape::y> _visited = {};
+
+public:
+    std::array<u64, 13> prune(Genotype<IO, Shape> const& circuit) {
+        _counts = {};
+        _visited = {};
+
+        for (size_t x = 0; x != IO::out; ++x)
+            dfs(circuit, static_cast<int>(Shape::y) - 1, x);
+        return _counts;
+    }
+
+    void dfs(Genotype<IO, Shape> const& circuit, const int y, const int x) {
+        if (y < 0)
+            return;
+        if (_visited[y][x] == true)
+            return;
+        _visited[y][x] = true;
+
+        auto& node = circuit[y][x];
+        _counts[static_cast<size_t>(node.function)]++;
+
+        auto con = node.connectors.begin();
+        const auto end = node.connectors.end();
+
+        switch (node.function) {
+        case Fn::CONS:
+            break;
+        case Fn::AND:
+        case Fn::NAND:
+        case Fn::OR:
+        case Fn::XOR:
+        case Fn::NOR:
+            for (; con != end; ++con)
+                dfs(circuit, y - 1, *con);
+            break;
+        case Fn::NOP:
+        case Fn::NOT:
+        case Fn::SHIL:
+        case Fn::SHIR:
+        case Fn::ROTL:
+        case Fn::ROTR:
+        case Fn::MASK:
+            if (con != end)
+                dfs(circuit, y - 1, *con);
+            break;
+        case Fn::_Size:
+            assert(false);
+            break;
+        }
+    }
+};
+
+template <class IO, class Shape>
+std::array<u64, 13> Genotype<IO, Shape>::get_function_count() const {
+    return Prunner<IO, Shape>().prune(*this);
+}
 } // namespace circuit
