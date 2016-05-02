@@ -32,17 +32,17 @@ Categories::~Categories() {
     {
         std::ofstream histogram_history_file_a("histograms_a.csv");
         for (const auto& histogram : _histogram_history_a) {
-            for (const auto& value : histogram)
-                histogram_history_file_a << value << ",";
-            histogram_history_file_a << std::endl;
+            for (unsigned i = 0; i != _precision - 1; ++i)
+                histogram_history_file_a << histogram[i] << ", ";
+            histogram_history_file_a << histogram.back() << std::endl;
         }
     }
     {
         std::ofstream histogram_history_file_b("histograms_b.csv");
         for (const auto& histogram : _histogram_history_b) {
-            for (const auto& value : histogram)
-                histogram_history_file_b << value << ",";
-            histogram_history_file_b << std::endl;
+            for (unsigned i = 0; i != _precision - 1; ++i)
+                histogram_history_file_b << histogram[i] << ", ";
+            histogram_history_file_b << histogram.back() << std::endl;
         }
     }
 }
