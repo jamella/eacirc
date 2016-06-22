@@ -219,17 +219,22 @@ int CaesarProject::generateCipherDataStream() {
     unsigned char* tvInputs = new unsigned char[pGlobals->settings->testVectors.inputLength];
     memset(tvInputs,0,pGlobals->settings->testVectors.inputLength);
 
-    string streamFilename = CAESAR_FILE_STREAM;
+    string streamFilename_1 = CAESAR_FILE_STREAM_1;
+    string streamFilename_2 = CAESAR_FILE_STREAM_2;
     mainLogger.out(LOGGER_INFO) << "Generating cipher data stream for " << m_encryptor->shortDescription() << "." << endl;
 
 
-    ostream* vectorStream = NULL;
+    ostream* vectorStream1 = NULL;
+    ostream* vectorStream2 = NULL;
     if (pCaesarSettings->streamSize == 0) {
-        vectorStream = &cout;
+        vectorStream1 = &cout;
         mainLogger.out(LOGGER_INFO) << "Sneding binary stream to standard output." << endl;
     } else {
-        vectorStream = new ofstream(streamFilename, ios_base::binary | ios_base::trunc);
-        mainLogger.out(LOGGER_INFO) << "Saving binary stream to file '" << streamFilename << "'." << endl;
+        vectorStream1 = new ofstream(streamFilename_1, ios_base::binary | ios_base::trunc);
+        mainLogger.out(LOGGER_INFO) << "Saving binary stream to file '" << streamFilename_1 << "'." << endl;
+
+        vectorStream2 = new ofstream(streamFilename_2, ios_base::binary | ios_base::trunc);
+        mainLogger.out(LOGGER_INFO) << "Saving random stream to file '" << streamFilename_2 << "'." << endl;
     }
     unsigned long alreadyGenerated = 0;
     while (pCaesarSettings->streamSize == 0 ? true : alreadyGenerated <= pCaesarSettings->streamSize) {
@@ -240,15 +245,25 @@ int CaesarProject::generateCipherDataStream() {
             status = prepareSingleTestVector(tvInputs,tvOutputs);
 
             for (int index = 0; index < pGlobals->settings->testVectors.inputLength; index++) {
-                (*vectorStream) << tvInputs[index];
+                (*vectorStream1) << tvInputs[index];
             }
+
+            // random stream
+            for (int byte = 0; byte < pGlobals->settings->testVectors.inputLength; byte++) {
+                unsigned char data;
+                rndGen->getRandomFromInterval(255, &data);
+                (*vectorStream2) << data;
+            }
+
             alreadyGenerated += pGlobals->settings->testVectors.inputLength;
         }
     }
 
     if (pCaesarSettings->streamSize != 0) {
-        delete vectorStream;
-        vectorStream = NULL;
+        delete vectorStream1;
+        vectorStream1 = NULL;
+        delete vectorStream2;
+        vectorStream2 = NULL;
     }
     if (status == STAT_OK) {
         mainLogger.out(LOGGER_INFO) << "Cipher data generation successful (" << alreadyGenerated << " bytes)." << endl;

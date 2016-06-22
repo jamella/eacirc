@@ -12,7 +12,8 @@
 #define CAESAR_TYPE_RANDOM          3
 
 // filenames
-#define CAESAR_FILE_STREAM      "caesar_stream.bin"
+#define CAESAR_FILE_STREAM_1      "caesar_stream1.bin"
+#define CAESAR_FILE_STREAM_2      "caesar_stream2.bin"
 
 typedef unsigned char bits_t;
 typedef unsigned long long length_t;
