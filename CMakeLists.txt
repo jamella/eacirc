@@ -17,6 +17,11 @@ add_subdirectory(eacirc)
 add_subdirectory(metaheuristics)
 add_subdirectory(tests)
 
+# === projects ===
+add_subdirectory(projects/sha3)
+add_subdirectory(streams/sha3)
+
 # === 3rd party dependencies ===
 add_subdirectory(external/catch)
 add_subdirectory(external/json)
+add_subdirectory(external/pcg-cpp-0.98)
